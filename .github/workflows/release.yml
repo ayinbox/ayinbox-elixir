@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: hex
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.18"
+          otp-version: "27"
+      - name: Check the tag matches the version
+        run: |
+          version="$(grep -E '@version "' mix.exs | head -1 | sed -E 's/.*"(.*)".*/\1/')"
+          test "v${version}" = "${GITHUB_REF_NAME}"
+      - run: mix deps.get
+      - run: MIX_ENV=test mix test
+      - name: Publish to Hex
+        run: mix hex.publish --yes
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
