@@ -63,8 +63,7 @@ defmodule AyInboxTest do
            "api_key_mailbox_limited"},
           {"404_not_found.json", :not_found, 404, "not_found"},
           {"409_conflict.json", :conflict, 409, "conflict"},
-          {"409_idempotency_outcome_unknown.json", :conflict, 409,
-           "idempotency_outcome_unknown"},
+          {"409_idempotency_outcome_unknown.json", :conflict, 409, "idempotency_outcome_unknown"},
           {"409_idempotent_secret_withheld.json", :conflict, 409, "idempotent_secret_withheld"},
           {"422_unprocessable.json", :unprocessable, 422, "unprocessable"},
           {"500_internal_error.json", :internal_server, 500, "internal_error"}
@@ -233,8 +232,7 @@ defmodule AyInboxTest do
       assert_received {:query, %{"status" => "draft"} = first}
       refute Map.has_key?(first, "cursor")
 
-      assert_received {:query,
-                       %{"status" => "draft", "cursor" => "c1_ZmFrZS1jdXJzb3ItcGFnZS0y"}}
+      assert_received {:query, %{"status" => "draft", "cursor" => "c1_ZmFrZS1jdXJzb3ItcGFnZS0y"}}
     end
 
     test "raises the error when a page fails" do
@@ -261,6 +259,7 @@ defmodule AyInboxTest do
       end)
 
       c = client()
+
       assert {:ok, %{"data" => [_ | _], "pagination" => %{"has_more" => true}}} =
                AyInbox.Campaigns.list(c, limit: 10)
 
